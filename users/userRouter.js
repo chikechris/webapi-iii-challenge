@@ -14,12 +14,27 @@ usersDb
 })
 });
 
-router.post('/:id/posts', (req, res) => {
-
+router.post('/:id/posts',  validateUserId, validateUser, (req, res) => {
+const postInfor = {...req.body, user_id: req.params.id}
+postDb
+.insert(postInfor)
+.then(post => {
+  res.status(201).json(post)
+})
+.catch(err => {
+  res.status(500).json(err)
+})
 });
 
 router.get('/', (req, res) => {
-
+  usersDb
+    .get()
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
 
 router.get('/:id', (req, res) => {
