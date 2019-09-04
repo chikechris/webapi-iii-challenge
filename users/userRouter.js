@@ -1,9 +1,17 @@
 const express = 'express';
+const usersDb = require('./userDb.js')
 
 const router = express.Router();
 
 router.post('/', (req, res) => {
-
+usersDb
+.insert(req.body)
+.then(user => {
+  res.status(201).json(user)
+})
+.catch(err => {
+  res.status(500).json(err)
+})
 });
 
 router.post('/:id/posts', (req, res) => {
