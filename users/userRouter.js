@@ -1,7 +1,8 @@
-const express = 'express'
+const express =require( 'express')
 const usersDb = require('./userDb.js')
 
 const router = express.Router()
+router.use(express.json())
 
 router.post('/', (req, res) => {
   usersDb
@@ -71,9 +72,34 @@ router.put('/:id', (req, res) => {})
 
 // custom middleware
 
-function validateUserId (req, res, next) {}
+function validateUserId(req, res, next) {
+  usersDb
+    .getById(req.params.id)
+    .then(user => {
+      if (user) {
+        req.user = user;
+     
+        next();
+      } else {
+        res.status(404).json({ message: 'Id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+}
 
-function validateUser (req, res, next) {}
+function validateUser(req, res, next) {
+  console.log(Object.keys(req.body));
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).json({ message: 'missing user data.' });
+  } else if (!req.body.name) {
+    res.status(400).json({ message: 'missing required name field' });
+  } else {
+    next();
+  }
+  
+}
 
 function validatePostId(req, res, next) {
   postsDB
